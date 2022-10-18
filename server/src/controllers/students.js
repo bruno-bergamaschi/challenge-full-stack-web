@@ -1,17 +1,12 @@
 const Students = require('../models/students');
 const status = require('http-status');
-const checkEmptyFields = require('../utils/students/checkEmptyFields');
+const validate = require('./schema/students');
 
 exports.Create = async (req, res) => {
   const { name, email, ra, cpf } = req.body;
 
   try {
-    await checkEmptyFields.Check([
-      { prop: 'name', value: name },
-      { prop: 'email', value: email },
-      { prop: 'ra', value: ra },
-      { prop: 'cpf', value: cpf },
-    ]);
+    validate().body(req.body).type('create');
 
     const [user, created] = await Students.findOrCreate({
       where: {
@@ -56,10 +51,7 @@ exports.Update = async (req, res) => {
   const { name, email } = req.body;
 
   try {
-    await checkEmptyFields.Check([
-      { prop: 'name', value: name },
-      { prop: 'email', value: email },
-    ]);
+    validate().body(req.body).type('edit');
 
     const [result] = await Students.update(
       {
